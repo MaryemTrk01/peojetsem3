@@ -13,8 +13,8 @@ type StreamPoint = {
 };
 
 function toneFromHealth(h: number) {
-  if (h >= 80) return "good";
-  if (h >= 50) return "warn";
+  if (h >= 50) return "good";
+  if (h >= 30) return "warn";
   return "bad";
 }
 
@@ -116,7 +116,42 @@ export default function App() {
             </div>
 
             {/* Professional Control Group */}
-            <div className="flex items-center gap-6 pl-8"></div>
+            <div className="flex items-center gap-6 pl-8">
+              {/* Status LED Indicators */}
+              <div className="flex items-center gap-3">
+                <div className="text-xs font-semibold text-slate-300 uppercase tracking-wide">
+                  Status:
+                </div>
+                <div className="flex items-center gap-2">
+                  {/* Green LED - Good */}
+                  <div
+                    className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                      latest && toneFromHealth(latest.health_global) === "good"
+                        ? "bg-green-500 shadow-lg shadow-green-500/60 animate-pulse"
+                        : "bg-slate-600"
+                    }`}
+                  ></div>
+
+                  {/* Orange LED - Warning */}
+                  <div
+                    className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                      latest && toneFromHealth(latest.health_global) === "warn"
+                        ? "bg-orange-500 shadow-lg shadow-orange-500/60 animate-pulse"
+                        : "bg-slate-600"
+                    }`}
+                  ></div>
+
+                  {/* Red LED - Bad */}
+                  <div
+                    className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                      latest && toneFromHealth(latest.health_global) === "bad"
+                        ? "bg-red-500 shadow-lg shadow-red-500/60 animate-pulse"
+                        : "bg-slate-600"
+                    }`}
+                  ></div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </header>
