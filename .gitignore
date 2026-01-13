@@ -1,0 +1,25 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Node / React
+node_modules/
+dist/
+
+# Environment
+.env
+.env.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Model files (optional, large files)
+*.h5
+*.tflite
+*.pkl
+*.npy
+
+# Logs
+*.log

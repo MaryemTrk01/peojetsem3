@@ -1,0 +1,9 @@
+flask==3.0.0
+flask-cors==4.0.0
+numpy
+pandas
+joblib
+tensorflow; platform_machine != "aarch64"
+librosa
+soundfile
+tflite-runtime; platform_machine == "aarch64"
