@@ -24,7 +24,7 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isRunning, setIsRunning] = useState(true);
-  const refreshRate = 30000; // 30 seconds in ms
+  const refreshRate = 20000; // 20 seconds in ms
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const dataRef = useRef<StreamPoint[]>([]);
 
@@ -116,8 +116,7 @@ export default function App() {
             </div>
 
             {/* Professional Control Group */}
-            <div className="flex items-center gap-6 pl-8">
-            </div>
+            <div className="flex items-center gap-6 pl-8"></div>
           </div>
         </div>
       </header>
@@ -164,9 +163,9 @@ export default function App() {
               <div className="group relative">
                 <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-purple-400 rounded-lg opacity-0 group-hover:opacity-10 blur transition-opacity duration-300"></div>
                 <StatCard
-                  title="Motor Health"
+                  title="Audio Health"
                   value={latest ? `${latest.health_audio.toFixed(1)}%` : "—"}
-                  subtitle="Motor analysis"
+                  subtitle="Sound analysis"
                   tone={
                     latest
                       ? (toneFromHealth(latest.health_audio) as any)
@@ -239,14 +238,14 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* Motor Chart */}
+                {/* Audio Chart */}
                 <div className="rounded-xl border border-slate-700/40 bg-gradient-to-br from-slate-800/60 to-slate-800/40 p-6 backdrop-blur-sm hover:border-slate-600/60 transition-all duration-300 shadow-xl">
                   <div className="mb-5 flex items-center gap-3">
                     <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-purple-500/20 border border-purple-500/40">
-                      <span className="text-sm">⚙️</span>
+                      <span className="text-sm">🔊</span>
                     </div>
                     <div className="font-semibold text-slate-100">
-                      Motor Health
+                      Audio Health
                     </div>
                   </div>
                   <div className="h-72">
@@ -254,7 +253,7 @@ export default function App() {
                       <HealthChart
                         data={data}
                         dataKey="health_audio"
-                        label="Motor"
+                        label="Audio"
                         color="#8b5cf6"
                       />
                     ) : (
