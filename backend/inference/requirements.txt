@@ -1,0 +1,8 @@
+numpy
+joblib
+flask
+pandas
+librosa
+# On Raspberry Pi prefer:
+# tflite-runtime
+# (or install tensorflow if you don't use TFLite)
