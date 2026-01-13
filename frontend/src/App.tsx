@@ -24,7 +24,7 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isRunning, setIsRunning] = useState(true);
-  const refreshRate = 20000; // 20 seconds in ms
+  const refreshRate = 15000; // 15 seconds in ms
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const dataRef = useRef<StreamPoint[]>([]);
 
