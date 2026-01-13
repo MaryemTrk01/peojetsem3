@@ -94,46 +94,72 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800">
       {/* Header */}
-      <header className="border-b border-slate-700 bg-slate-900/90 backdrop-blur">
-        <div className="mx-auto max-w-7xl px-4 py-6">
+      <header className="border-b border-slate-700/50 bg-slate-900/80 backdrop-blur-sm sticky top-0 z-10">
+        <div className="px-8 py-5">
           <div className="flex items-center justify-between">
-            <div>
-              <div className="text-2xl font-bold text-white">
-                PiCube Dashboard
-              </div>
-              <div className="mt-1 text-sm text-slate-400">
-                Virtual Simulation Mode | Real-time Health & RUL Monitoring
+            <div className="flex-1">
+              <div className="flex items-center gap-3">
+                <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500">
+                  <span className="text-lg font-bold text-white">π</span>
+                </div>
+                <div>
+                  <div className="text-2xl font-bold text-white">
+                    PiCube Dashboard
+                  </div>
+                  <div className="text-xs text-slate-400">
+                    Real-time Health & RUL Monitoring
+                  </div>
+                </div>
               </div>
             </div>
-            <div className="flex items-center gap-4">
-              <button
-                onClick={handleTogglePlayback}
-                className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
-                  isRunning
-                    ? "bg-red-600 hover:bg-red-700 text-white"
-                    : "bg-green-600 hover:bg-green-700 text-white"
-                }`}
-              >
-                {isRunning ? "⏸ Stop" : "▶ Play"}
-              </button>
-              <button
-                onClick={handleReset}
-                className="rounded-lg bg-slate-700 hover:bg-slate-600 px-4 py-2 text-sm font-medium text-white transition"
-              >
-                🔄 Reset
-              </button>
+            
+            {/* Professional Control Group */}
+            <div className="flex items-center gap-6 pl-8">
+              <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-800/60 border border-slate-700/60">
+                <span className="text-xs font-semibold text-slate-300 uppercase tracking-wide">Mode:</span>
+                <span className="text-sm font-medium text-cyan-400">Virtual Simulation</span>
+              </div>
+              
+              <div className="h-8 w-px bg-slate-700/50"></div>
+              
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleTogglePlayback}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition-all duration-200 ${
+                    isRunning
+                      ? "bg-red-600/90 hover:bg-red-600 text-white shadow-lg shadow-red-600/30"
+                      : "bg-green-600/90 hover:bg-green-600 text-white shadow-lg shadow-green-600/30"
+                  }`}
+                  title={isRunning ? "Pause simulation" : "Resume simulation"}
+                >
+                  <span className="text-lg">{isRunning ? "⏸" : "▶"}</span>
+                  <span className="text-sm">{isRunning ? "Pause" : "Play"}</span>
+                </button>
+                
+                <button
+                  onClick={handleReset}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-700/70 hover:bg-slate-600 text-slate-100 font-semibold transition-all duration-200"
+                  title="Reset simulation"
+                >
+                  <span className="text-lg">🔄</span>
+                  <span className="text-sm">Reset</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </header>
 
-      <main className="mx-auto max-w-7xl px-4 py-8">
+      <main className="px-8 py-8">
         {/* Error Alert */}
         {error && (
-          <div className="mb-6 rounded-lg border border-red-500/50 bg-red-500/10 p-4 text-sm text-red-300">
-            ⚠️ {error}
+          <div className="mb-6 rounded-lg border border-red-500/40 bg-red-500/5 p-4 text-sm text-red-300 backdrop-blur">
+            <div className="flex items-center gap-2">
+              <span className="text-lg">⚠️</span>
+              <span>{error}</span>
+            </div>
           </div>
         )}
 
@@ -141,101 +167,136 @@ export default function App() {
         {loading && !latest ? (
           <div className="flex h-96 items-center justify-center">
             <div className="text-center">
-              <div className="mb-4 animate-spin text-4xl">⏳</div>
-              <div className="text-lg text-slate-300">
+              <div className="mb-4 animate-spin text-5xl">⏳</div>
+              <div className="text-lg text-slate-300 font-medium">
                 Loading simulation data...
               </div>
             </div>
           </div>
         ) : (
           <>
-            {/* Stat Cards */}
-            <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              <StatCard
-                title="Vibration Health"
-                value={latest ? `${latest.health_vib.toFixed(1)}%` : "—"}
-                subtitle="Current sensor reading"
-                tone={
-                  latest
-                    ? (toneFromHealth(latest.health_vib) as any)
-                    : "neutral"
-                }
-              />
-              <StatCard
-                title="Audio Health"
-                value={latest ? `${latest.health_audio.toFixed(1)}%` : "—"}
-                subtitle="Sound analysis"
-                tone={
-                  latest
-                    ? (toneFromHealth(latest.health_audio) as any)
-                    : "neutral"
-                }
-              />
-              <StatCard
-                title="Global Health"
-                value={latest ? `${latest.health_global.toFixed(1)}%` : "—"}
-                subtitle={latest ? `Temp: ${latest.temp_c.toFixed(1)}°C` : "—"}
-                tone={
-                  latest
-                    ? (toneFromHealth(latest.health_global) as any)
-                    : "neutral"
-                }
-              />
-              <StatCard
-                title="RUL (Days)"
-                value={latest ? `${latest.rul_days.toFixed(1)}` : "—"}
-                subtitle="Remaining useful life"
-                tone="neutral"
-              />
+            {/* Stat Cards - Full Width Landscape Layout */}
+            <div className="mb-10 grid grid-cols-2 gap-5 lg:grid-cols-4">
+              <div className="group relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-400 rounded-lg opacity-0 group-hover:opacity-10 blur transition-opacity duration-300"></div>
+                <StatCard
+                  title="Vibration Health"
+                  value={latest ? `${latest.health_vib.toFixed(1)}%` : "—"}
+                  subtitle="Current sensor"
+                  tone={
+                    latest
+                      ? (toneFromHealth(latest.health_vib) as any)
+                      : "neutral"
+                  }
+                />
+              </div>
+              
+              <div className="group relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-purple-400 rounded-lg opacity-0 group-hover:opacity-10 blur transition-opacity duration-300"></div>
+                <StatCard
+                  title="Audio Health"
+                  value={latest ? `${latest.health_audio.toFixed(1)}%` : "—"}
+                  subtitle="Sound analysis"
+                  tone={
+                    latest
+                      ? (toneFromHealth(latest.health_audio) as any)
+                      : "neutral"
+                  }
+                />
+              </div>
+              
+              <div className="group relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 to-emerald-400 rounded-lg opacity-0 group-hover:opacity-10 blur transition-opacity duration-300"></div>
+                <StatCard
+                  title="Global Health"
+                  value={latest ? `${latest.health_global.toFixed(1)}%` : "—"}
+                  subtitle={latest ? `${latest.temp_c.toFixed(1)}°C` : "—"}
+                  tone={
+                    latest
+                      ? (toneFromHealth(latest.health_global) as any)
+                      : "neutral"
+                  }
+                />
+              </div>
+              
+              <div className="group relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-amber-600 to-amber-400 rounded-lg opacity-0 group-hover:opacity-10 blur transition-opacity duration-300"></div>
+                <StatCard
+                  title="RUL (Days)"
+                  value={latest ? `${latest.rul_days.toFixed(1)}` : "—"}
+                  subtitle="Remaining useful life"
+                  tone="neutral"
+                />
+              </div>
             </div>
 
-            {/* Charts */}
-            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-              <div className="rounded-lg border border-slate-700 bg-slate-800/50 p-6 backdrop-blur">
-                <div className="mb-4 text-sm font-semibold text-slate-200">
-                  Vibration Health Over Time
-                </div>
-                <div className="h-64">
-                  {data.length > 0 ? (
-                    <HealthChart
-                      data={data}
-                      dataKey="health_vib"
-                      label="Vibration"
-                      color="#3b82f6"
-                    />
-                  ) : (
-                    <div className="flex h-full items-center justify-center text-slate-500">
-                      Waiting for data...
+            {/* Charts Layout - 2 Top, 1 Bottom Full Width */}
+            <div className="grid grid-cols-1 gap-6 mb-8">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Vibration Chart */}
+                <div className="rounded-xl border border-slate-700/40 bg-gradient-to-br from-slate-800/60 to-slate-800/40 p-6 backdrop-blur-sm hover:border-slate-600/60 transition-all duration-300 shadow-xl">
+                  <div className="mb-5 flex items-center gap-3">
+                    <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-500/20 border border-blue-500/40">
+                      <span className="text-sm">📊</span>
                     </div>
-                  )}
+                    <div className="font-semibold text-slate-100">
+                      Vibration Health
+                    </div>
+                  </div>
+                  <div className="h-72">
+                    {data.length > 0 ? (
+                      <HealthChart
+                        data={data}
+                        dataKey="health_vib"
+                        label="Vibration"
+                        color="#3b82f6"
+                      />
+                    ) : (
+                      <div className="flex h-full items-center justify-center text-slate-500">
+                        Waiting for data...
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Audio Chart */}
+                <div className="rounded-xl border border-slate-700/40 bg-gradient-to-br from-slate-800/60 to-slate-800/40 p-6 backdrop-blur-sm hover:border-slate-600/60 transition-all duration-300 shadow-xl">
+                  <div className="mb-5 flex items-center gap-3">
+                    <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-purple-500/20 border border-purple-500/40">
+                      <span className="text-sm">🔊</span>
+                    </div>
+                    <div className="font-semibold text-slate-100">
+                      Audio Health
+                    </div>
+                  </div>
+                  <div className="h-72">
+                    {data.length > 0 ? (
+                      <HealthChart
+                        data={data}
+                        dataKey="health_audio"
+                        label="Audio"
+                        color="#8b5cf6"
+                      />
+                    ) : (
+                      <div className="flex h-full items-center justify-center text-slate-500">
+                        Waiting for data...
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
 
-              <div className="rounded-lg border border-slate-700 bg-slate-800/50 p-6 backdrop-blur">
-                <div className="mb-4 text-sm font-semibold text-slate-200">
-                  Audio Health Over Time
+              {/* Global Health Chart - Full Width */}
+              <div className="rounded-xl border border-slate-700/40 bg-gradient-to-br from-slate-800/60 to-slate-800/40 p-6 backdrop-blur-sm hover:border-slate-600/60 transition-all duration-300 shadow-xl">
+                <div className="mb-5 flex items-center gap-3">
+                  <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-emerald-500/20 border border-emerald-500/40">
+                    <span className="text-sm">💚</span>
+                  </div>
+                  <div className="font-semibold text-slate-100">
+                    Global Health & RUL Prediction
+                  </div>
                 </div>
-                <div className="h-64">
-                  {data.length > 0 ? (
-                    <HealthChart
-                      data={data}
-                      dataKey="health_audio"
-                      label="Audio"
-                      color="#8b5cf6"
-                    />
-                  ) : (
-                    <div className="flex h-full items-center justify-center text-slate-500">
-                      Waiting for data...
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div className="rounded-lg border border-slate-700 bg-slate-800/50 p-6 backdrop-blur lg:col-span-2">
-                <div className="mb-4 text-sm font-semibold text-slate-200">
-                  Global Health & RUL Prediction
-                </div>
-                <div className="h-64">
+                <div className="h-72">
                   {data.length > 0 ? (
                     <HealthChart
                       data={data}
@@ -252,18 +313,27 @@ export default function App() {
               </div>
             </div>
 
-            {/* Data Stats */}
-            <div className="mt-8 rounded-lg border border-slate-700 bg-slate-800/50 p-6 backdrop-blur">
-              <div className="text-sm text-slate-400">
-                <div>
-                  Points collected:{" "}
-                  <span className="font-semibold text-slate-200">
-                    {data.length}
-                  </span>
+            {/* Data Stats Footer */}
+            <div className="rounded-xl border border-slate-700/40 bg-gradient-to-r from-slate-800/40 to-slate-800/20 p-6 backdrop-blur-sm">
+              <div className="flex items-center justify-between">
+                <div className="space-y-2">
+                  <div className="text-xs uppercase tracking-widest text-slate-400 font-semibold">Monitoring Status</div>
+                  <div className="flex items-center gap-4">
+                    <div>
+                      <span className="text-slate-400 text-sm">Data Points: </span>
+                      <span className="font-bold text-cyan-400 text-lg">{data.length}</span>
+                    </div>
+                    <div className="h-6 w-px bg-slate-700/50"></div>
+                    <div>
+                      <span className="text-slate-400 text-sm">Status: </span>
+                      <span className={`font-bold text-sm ${isRunning ? 'text-green-400' : 'text-orange-400'}`}>
+                        {isRunning ? "● Streaming" : "● Paused"}
+                      </span>
+                    </div>
+                  </div>
                 </div>
-                <div className="mt-2 text-xs">
-                  Simulation data loaded from: training/demo CSV & WAV files (or
-                  synthetic if missing)
+                <div className="text-right text-xs text-slate-500">
+                  Powered by TensorFlow • Real-time Simulation
                 </div>
               </div>
             </div>
