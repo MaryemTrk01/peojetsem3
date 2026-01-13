@@ -24,7 +24,7 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isRunning, setIsRunning] = useState(true);
-  const refreshRate = 10000; // 10 seconds in ms
+  const refreshRate = 30000; // 30 seconds in ms
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const dataRef = useRef<StreamPoint[]>([]);
 
@@ -101,12 +101,12 @@ export default function App() {
           <div className="flex items-center justify-between">
             <div className="flex-1">
               <div className="flex items-center gap-3">
-                <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500">
-                  <span className="text-lg font-bold text-white">π</span>
+                <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-orange-500 to-red-500">
+                  <span className="text-lg font-bold text-white">⚙️</span>
                 </div>
                 <div>
                   <div className="text-2xl font-bold text-white">
-                    PiCube Dashboard
+                    Predictive Maintenance
                   </div>
                   <div className="text-xs text-slate-400">
                     Real-time Health & RUL Monitoring
@@ -114,39 +114,9 @@ export default function App() {
                 </div>
               </div>
             </div>
-            
+
             {/* Professional Control Group */}
             <div className="flex items-center gap-6 pl-8">
-              <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-800/60 border border-slate-700/60">
-                <span className="text-xs font-semibold text-slate-300 uppercase tracking-wide">Mode:</span>
-                <span className="text-sm font-medium text-cyan-400">Virtual Simulation</span>
-              </div>
-              
-              <div className="h-8 w-px bg-slate-700/50"></div>
-              
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={handleTogglePlayback}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition-all duration-200 ${
-                    isRunning
-                      ? "bg-red-600/90 hover:bg-red-600 text-white shadow-lg shadow-red-600/30"
-                      : "bg-green-600/90 hover:bg-green-600 text-white shadow-lg shadow-green-600/30"
-                  }`}
-                  title={isRunning ? "Pause simulation" : "Resume simulation"}
-                >
-                  <span className="text-lg">{isRunning ? "⏸" : "▶"}</span>
-                  <span className="text-sm">{isRunning ? "Pause" : "Play"}</span>
-                </button>
-                
-                <button
-                  onClick={handleReset}
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-700/70 hover:bg-slate-600 text-slate-100 font-semibold transition-all duration-200"
-                  title="Reset simulation"
-                >
-                  <span className="text-lg">🔄</span>
-                  <span className="text-sm">Reset</span>
-                </button>
-              </div>
             </div>
           </div>
         </div>
@@ -176,7 +146,7 @@ export default function App() {
         ) : (
           <>
             {/* Stat Cards - Full Width Landscape Layout */}
-            <div className="mb-10 grid grid-cols-2 gap-5 lg:grid-cols-4">
+            <div className="mb-10 grid grid-cols-2 gap-5 lg:grid-cols-5">
               <div className="group relative">
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-400 rounded-lg opacity-0 group-hover:opacity-10 blur transition-opacity duration-300"></div>
                 <StatCard
@@ -190,13 +160,13 @@ export default function App() {
                   }
                 />
               </div>
-              
+
               <div className="group relative">
                 <div className="absolute inset-0 bg-gradient-to-r from-purple-600 to-purple-400 rounded-lg opacity-0 group-hover:opacity-10 blur transition-opacity duration-300"></div>
                 <StatCard
-                  title="Audio Health"
+                  title="Motor Health"
                   value={latest ? `${latest.health_audio.toFixed(1)}%` : "—"}
-                  subtitle="Sound analysis"
+                  subtitle="Motor analysis"
                   tone={
                     latest
                       ? (toneFromHealth(latest.health_audio) as any)
@@ -204,13 +174,13 @@ export default function App() {
                   }
                 />
               </div>
-              
+
               <div className="group relative">
                 <div className="absolute inset-0 bg-gradient-to-r from-emerald-600 to-emerald-400 rounded-lg opacity-0 group-hover:opacity-10 blur transition-opacity duration-300"></div>
                 <StatCard
                   title="Global Health"
                   value={latest ? `${latest.health_global.toFixed(1)}%` : "—"}
-                  subtitle={latest ? `${latest.temp_c.toFixed(1)}°C` : "—"}
+                  subtitle="System status"
                   tone={
                     latest
                       ? (toneFromHealth(latest.health_global) as any)
@@ -218,13 +188,23 @@ export default function App() {
                   }
                 />
               </div>
-              
+
               <div className="group relative">
                 <div className="absolute inset-0 bg-gradient-to-r from-amber-600 to-amber-400 rounded-lg opacity-0 group-hover:opacity-10 blur transition-opacity duration-300"></div>
                 <StatCard
                   title="RUL (Days)"
                   value={latest ? `${latest.rul_days.toFixed(1)}` : "—"}
                   subtitle="Remaining useful life"
+                  tone="neutral"
+                />
+              </div>
+
+              <div className="group relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-red-600 to-orange-400 rounded-lg opacity-0 group-hover:opacity-10 blur transition-opacity duration-300"></div>
+                <StatCard
+                  title="Temperature"
+                  value={latest ? `${latest.temp_c.toFixed(1)}°C` : "—"}
+                  subtitle="System temperature"
                   tone="neutral"
                 />
               </div>
@@ -259,14 +239,14 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* Audio Chart */}
+                {/* Motor Chart */}
                 <div className="rounded-xl border border-slate-700/40 bg-gradient-to-br from-slate-800/60 to-slate-800/40 p-6 backdrop-blur-sm hover:border-slate-600/60 transition-all duration-300 shadow-xl">
                   <div className="mb-5 flex items-center gap-3">
                     <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-purple-500/20 border border-purple-500/40">
-                      <span className="text-sm">🔊</span>
+                      <span className="text-sm">⚙️</span>
                     </div>
                     <div className="font-semibold text-slate-100">
-                      Audio Health
+                      Motor Health
                     </div>
                   </div>
                   <div className="h-72">
@@ -274,7 +254,7 @@ export default function App() {
                       <HealthChart
                         data={data}
                         dataKey="health_audio"
-                        label="Audio"
+                        label="Motor"
                         color="#8b5cf6"
                       />
                     ) : (
@@ -317,16 +297,26 @@ export default function App() {
             <div className="rounded-xl border border-slate-700/40 bg-gradient-to-r from-slate-800/40 to-slate-800/20 p-6 backdrop-blur-sm">
               <div className="flex items-center justify-between">
                 <div className="space-y-2">
-                  <div className="text-xs uppercase tracking-widest text-slate-400 font-semibold">Monitoring Status</div>
+                  <div className="text-xs uppercase tracking-widest text-slate-400 font-semibold">
+                    Monitoring Status
+                  </div>
                   <div className="flex items-center gap-4">
                     <div>
-                      <span className="text-slate-400 text-sm">Data Points: </span>
-                      <span className="font-bold text-cyan-400 text-lg">{data.length}</span>
+                      <span className="text-slate-400 text-sm">
+                        Data Points:{" "}
+                      </span>
+                      <span className="font-bold text-cyan-400 text-lg">
+                        {data.length}
+                      </span>
                     </div>
                     <div className="h-6 w-px bg-slate-700/50"></div>
                     <div>
                       <span className="text-slate-400 text-sm">Status: </span>
-                      <span className={`font-bold text-sm ${isRunning ? 'text-green-400' : 'text-orange-400'}`}>
+                      <span
+                        className={`font-bold text-sm ${
+                          isRunning ? "text-green-400" : "text-orange-400"
+                        }`}
+                      >
                         {isRunning ? "● Streaming" : "● Paused"}
                       </span>
                     </div>

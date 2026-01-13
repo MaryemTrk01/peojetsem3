@@ -67,6 +67,8 @@ class SimulationState:
         # Build combined timeseries
         for i in range(n_points):
             hv = float(vib_data[i])
+            # Clip vibration between 10% and 95%
+            hv = np.clip(hv, 10.0, 95.0)
             ha = float(aud_data[i])
             temp_c = 30.0 + (i / n_points) * 20  # 30-50°C range
             
@@ -90,11 +92,17 @@ class SimulationState:
         """Load vibration health from CSV or generate synthetic"""
         try:
             df = pd.read_csv(VIB_TS_CSV)
+            logger.info(f"CSV columns: {df.columns.tolist()}")
             cols = {c.lower(): c for c in df.columns}
+            logger.info(f"Lowercased column map: {cols}")
             
             if "health_vib" in cols:
-                return df[cols["health_vib"]].values.tolist()
+                logger.info(f"Loading health_vib column: {cols['health_vib']}")
+                data = df[cols["health_vib"]].values.tolist()
+                logger.info(f"Loaded {len(data)} vibration values, first 3: {data[:3]}")
+                return data
             elif "health" in cols:
+                logger.info(f"Loading health column: {cols['health']}")
                 return df[cols["health"]].values.tolist()
             else:
                 raise ValueError("No health column found")
